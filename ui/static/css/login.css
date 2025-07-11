@@ -1,0 +1,186 @@
+
+:root {
+  --color-primary: #ffffff;
+  --color-secondary: #b832d4;
+  --color-tertiary: #9333ea;
+  --color-quaternary: #a855f7;
+  --color-accent: #e879f9;
+  --color-warning: #fb7185;
+
+  --bg-primary: #0b0b0f;
+  --bg-secondary: #13131a;
+  --bg-tertiary: #1c1c27;
+  --bg-quaternary: #2c2c3a;
+
+  --text-primary: #ffffff;
+  --text-secondary: #f3e8ff;
+  --text-muted: #d8b4fe;
+  --text-dark: #a78bfa;
+
+  --gradient-main: linear-gradient(135deg, #b832d4 0%, #9333ea 50%, #a855f7 100%);
+  --gradient-sec: linear-gradient(135deg, #9d27b0 0%, #7c3aed 35%, #6d28d9 65%, #a21caf 100%);
+  --gradient-accent: linear-gradient(45deg, #e879f9 0%, #9333ea 100%);
+  --gradient-glow: radial-gradient(circle, #b832d4 0%, transparent 70%);
+  --gradient-crossing: linear-gradient(45deg, #b832d4 0%, transparent 30%, transparent 70%, #9333ea 100%),
+                       linear-gradient(-45deg, #e879f9 0%, transparent 30%, transparent 70%, #a855f7 100%);
+}
+
+body {
+  background-color: var(--bg-primary);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: var(--text-primary);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 4em;
+  background-color: var(--bg-secondary);
+  border-radius: 20px;
+  font-size: 1.3em;
+  transition: all 0.3s ease;
+}
+
+#heading {
+  text-align: center;
+  margin: 2em;
+  color: var(--color-primary);
+  font-size: 1.2em;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  border-radius: 25px;
+  padding: 0.6em;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  background-color: var(--bg-tertiary);
+  box-shadow: inset 2px 5px 10px var(--bg-primary);
+  transition: all 0.3s ease;
+}
+
+.input-icon {
+  height: 1.3em;
+  width: 1.3em;
+  fill: var(--color-accent);
+}
+
+.input-field {
+  background: none;
+  border: none;
+  outline: none;
+  width: 100%;
+  color: var(--color-primary);
+  font-size: 1em;
+}
+
+.form .btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 4em;
+}
+
+.button1, .button3 {
+  width: 200px;
+  font-size: 1em;
+  padding: 0.7em;
+  text-align: center;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  background-image: var(--gradient-main);
+  color: var(--text-primary);
+  margin-bottom: 1em;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease-in-out;
+  box-shadow: 0 3px 12px rgba(139, 92, 246, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.button1::before, .button3::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.button1:hover, .button3:hover {
+  transform: translateY(-3px);
+  background-image: var(--gradient-accent);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+}
+
+.button1:hover::before, .button3:hover::before {
+  left: 100%;
+}
+
+.card {
+  background-image: var(--gradient-sec);
+  border-radius: 22px;
+  transition: all .3s;
+}
+
+.card2 {
+  border-radius: 0;
+  transition: all .2s;
+}
+
+.card2:hover {
+  transform: scale(0.98);
+  border-radius: 20px;
+}
+
+.card:hover {
+  box-shadow: 0px 0px 30px 1px rgba(244, 114, 182, 0.3);
+}
+
+.oauth-button {
+    background-color: var(--bg-secondary);
+    color: var(--color-primary);
+    border: 1px solid var(--color-secondary);
+    box-shadow: 0 3px 10px rgba(184, 50, 212, 0.2);
+    padding: 1em 2em;
+    border-radius: 12px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+}
+
+.oauth-button:hover {
+    background-color: var(--color-secondary);
+    box-shadow: 0 5px 15px rgba(184, 50, 212, 0.4);
+    transform: translateY(-2px);
+}
+
+.oauth-button svg {
+    margin-right: 0.8em;
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+
