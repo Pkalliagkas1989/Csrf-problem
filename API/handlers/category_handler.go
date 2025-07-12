@@ -13,13 +13,15 @@ import (
 type CategoryHandler struct {
 	CategoryRepo *repository.CategoryRepository
 	PostRepo     *repository.PostRepository
+	ImageRepo    *repository.ImageRepository
 }
 
 // NewCategoryHandler creates a new CategoryHandler
-func NewCategoryHandler(catRepo *repository.CategoryRepository, postRepo *repository.PostRepository) *CategoryHandler {
+func NewCategoryHandler(catRepo *repository.CategoryRepository, postRepo *repository.PostRepository, imgRepo *repository.ImageRepository) *CategoryHandler {
 	return &CategoryHandler{
 		CategoryRepo: catRepo,
 		PostRepo:     postRepo,
+		ImageRepo:    imgRepo,
 	}
 }
 
@@ -72,6 +74,14 @@ func (h *CategoryHandler) GetCategoryByID(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		utils.ErrorResponse(w, "Failed to fetch posts", http.StatusInternalServerError)
 		return
+	}
+
+	for i := range posts {
+		img, _ := h.ImageRepo.GetByPostID(posts[i].ID)
+		if img != nil {
+			posts[i].ImagePath = img.Path
+			posts[i].ThumbnailPath = img.ThumbnailPath
+		}
 	}
 
 	categoryByID := models.CategoryWithPosts{

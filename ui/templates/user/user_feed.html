@@ -47,6 +47,7 @@
     <template id="post-template">
       <div class="post">
         <h3 class="post-header"></h3>
+        <img class="post-thumb" width="150" height="150" alt="Post image thumbnail" />
         <div class="post-title"></div>
         <p class="post-content"></p>
         <time class="post-time"></time>
@@ -86,6 +87,9 @@
         <div id="post-title-count" class="char-counter">0 / 100</div>
         <textarea id="post-body" placeholder="Write your post..."></textarea>
         <div id="post-body-count" class="char-counter">0 / 5000</div>
+        <input type="file" id="post-image" accept="image/jpeg,image/png,image/gif" style="display:none" />
+        <button id="add-image-btn" type="button">Add Image</button>
+        <div id="image-error" class="error"></div>
         </div>
 
         <div class="category-container">

@@ -107,6 +107,11 @@ function renderCategoryPosts(category, feedCategories) {
 
     const postNode = postTemplate.content.cloneNode(true);
     postNode.querySelector('.post-header').textContent = post.username || 'Anonymous';
+    if (post.thumbnail_path) {
+      postNode.querySelector('.post-thumb').src = post.thumbnail_path;
+    } else {
+      postNode.querySelector('.post-thumb').style.display = 'none';
+    }
     postNode.querySelector('.post-title').textContent = post.title;
     postNode.querySelector('.post-content').textContent = post.content;
     postNode.querySelector('.post-time').textContent = new Date(post.created_at).toLocaleString();

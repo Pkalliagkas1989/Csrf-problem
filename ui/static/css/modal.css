@@ -146,6 +146,12 @@
   accent-color: var(--color-tertiary);
 }
 
+.error {
+  color: var(--color-warning);
+  font-size: 0.9em;
+  margin-top: 0.5em;
+}
+
 .char-counter {
   font-size: 0.95em;
   color: var(--text-muted, #b0a7c3);
