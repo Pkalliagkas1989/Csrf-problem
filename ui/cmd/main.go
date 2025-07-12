@@ -1,15 +1,9 @@
 package main
 
 import (
-	"encoding/json" // Add this import
 	"log"
 	"net/http"
-	"path/filepath"
-)
-
-var (
-	templatesPath = filepath.Join("ui", "templates")
-	staticPath    = filepath.Join("ui", "static")
+	"encoding/json" // Add this import
 )
 
 // Add a struct to unmarshal the session verify response
@@ -63,37 +57,37 @@ func router(w http.ResponseWriter, r *http.Request) {
 	// ... (unchanged code for handling paths)
 	switch r.URL.Path {
 	case "/index":
-		http.ServeFile(w, r, filepath.Join(templatesPath, "index.html"))
+		http.ServeFile(w, r, "./static/templates/index.html")
 	case "/":
-		http.ServeFile(w, r, filepath.Join(templatesPath, "index.html"))
+		http.ServeFile(w, r, "./static/templates/index.html")
 	case "/login":
 		ok, _ := checkSession(r) // We don't need CSRF token here
 		if ok {
 			http.Redirect(w, r, "/user/feed", http.StatusFound) // Changed to user/feed for consistency
 			return
 		}
-		http.ServeFile(w, r, filepath.Join(templatesPath, "login.html"))
+		http.ServeFile(w, r, "./static/templates/login.html")
 	case "/register":
 		ok, _ := checkSession(r) // We don't need CSRF token here
 		if ok {
 			http.Redirect(w, r, "/user/feed", http.StatusFound) // Changed to user/feed for consistency
 			return
 		}
-		http.ServeFile(w, r, filepath.Join(templatesPath, "register.html"))
+		http.ServeFile(w, r, "./static/templates/register.html")
 	case "/guest":
-		http.ServeFile(w, r, filepath.Join(templatesPath, "guest", "guest_mainpage.html"))
+		http.ServeFile(w, r, "./static/templates/guest/guest_mainpage.html")
 	case "/guest/feed":
-		http.ServeFile(w, r, filepath.Join(templatesPath, "guest", "guest_feed.html"))
+		http.ServeFile(w, r, "./static/templates/guest/guest_feed.html")
 	case "/guest/category":
-		http.ServeFile(w, r, filepath.Join(templatesPath, "guest", "guest_category.html"))
+		http.ServeFile(w, r, "./static/templates/guest/guest_category.html")
 	case "/guest/post":
-		http.ServeFile(w, r, filepath.Join(templatesPath, "guest", "guest_post.html"))
+		http.ServeFile(w, r, "./static/templates/guest/guest_post.html")
 	case "/user":
 		if ok, _ := checkSession(r); !ok { // We don't need CSRF token here
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
-		http.ServeFile(w, r, filepath.Join(templatesPath, "user", "user_mainpage.html"))
+		http.ServeFile(w, r, "./static/templates/user/user_mainpage.html")
 	case "/user/feed":
 		if ok, csrfToken := checkSession(r); !ok { // Get CSRF token here
 			http.Redirect(w, r, "/login", http.StatusFound)
@@ -111,40 +105,40 @@ func router(w http.ResponseWriter, r *http.Request) {
 				SameSite: http.SameSiteLaxMode,
 			})
 		}
-		http.ServeFile(w, r, filepath.Join(templatesPath, "user", "user_feed.html"))
+		http.ServeFile(w, r, "./static/templates/user/user_feed.html")
 	case "/user/category":
 		if ok, _ := checkSession(r); !ok {
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
-		http.ServeFile(w, r, filepath.Join(templatesPath, "user", "user_category.html"))
+		http.ServeFile(w, r, "./static/templates/user/user_category.html")
 	case "/user/post":
 		if ok, _ := checkSession(r); !ok {
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
-		http.ServeFile(w, r, filepath.Join(templatesPath, "user", "user_post.html"))
+		http.ServeFile(w, r, "./static/templates/user/user_post.html")
 	case "/user/liked-posts":
 		if ok, _ := checkSession(r); !ok {
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
-		http.ServeFile(w, r, filepath.Join(templatesPath, "user", "user_liked_posts.html"))
+		http.ServeFile(w, r, "./static/templates/user/user_liked_posts.html")
 	case "/user/created-posts":
 		if ok, _ := checkSession(r); !ok {
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
-		http.ServeFile(w, r, filepath.Join(templatesPath, "user", "user_created_posts.html"))
+		http.ServeFile(w, r, "./static/templates/user/user_created_posts.html")
 	default:
 		w.WriteHeader(http.StatusNotFound)
-		http.ServeFile(w, r, filepath.Join(templatesPath, "error.html"))
+		http.ServeFile(w, r, "./static/templates/error.html")
 	}
 }
 
 func main() {
 	// Static files
-	fs := http.FileServer(http.Dir(staticPath))
+	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	// Use the custom router for all other paths
