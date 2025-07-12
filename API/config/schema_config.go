@@ -73,8 +73,7 @@ const CreateReactionsTable = `CREATE TABLE IF NOT EXISTS reactions (
             )
         );`
 
-
-//-- OAuth providers table to store OAuth account information
+// -- OAuth providers table to store OAuth account information
 const CreateOAuthTable = `CREATE TABLE IF NOT EXISTS oauth_accounts (
     oauth_id TEXT PRIMARY KEY,                    -- Unique identifier for this OAuth record
     user_id TEXT NOT NULL,                        -- Links to your existing user table
@@ -96,3 +95,14 @@ const CreateOAuthTable = `CREATE TABLE IF NOT EXISTS oauth_accounts (
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
 );`
 
+// Images table stores uploaded images associated with posts
+const CreateImagesTable = `CREATE TABLE IF NOT EXISTS images (
+    image_id TEXT PRIMARY KEY,
+    post_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    path TEXT NOT NULL,
+    thumbnail_path TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
+);`

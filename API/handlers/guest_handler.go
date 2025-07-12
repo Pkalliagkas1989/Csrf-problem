@@ -12,6 +12,7 @@ type GuestHandler struct {
 	postRepo     *repository.PostRepository
 	commentRepo  *repository.CommentRepository
 	reactionRepo *repository.ReactionRepository
+	imageRepo    *repository.ImageRepository
 }
 
 type ReactionResponse struct {
@@ -31,16 +32,18 @@ type CommentResponse struct {
 }
 
 type PostResponse struct {
-	ID           string             `json:"id"`
-	UserID       string             `json:"user_id"`
-	Username     string             `json:"username"`
-	CategoryID   int                `json:"category_id"`
-	CategoryName string             `json:"category_name"` // NEW FIELD
-	Title        string             `json:"title"`         // Optional title field
-	Content      string             `json:"content"`
-	CreatedAt    time.Time          `json:"created_at"`
-	Comments     []CommentResponse  `json:"comments,omitempty"`
-	Reactions    []ReactionResponse `json:"reactions,omitempty"`
+	ID            string             `json:"id"`
+	UserID        string             `json:"user_id"`
+	Username      string             `json:"username"`
+	CategoryID    int                `json:"category_id"`
+	CategoryName  string             `json:"category_name"` // NEW FIELD
+	Title         string             `json:"title"`         // Optional title field
+	Content       string             `json:"content"`
+	CreatedAt     time.Time          `json:"created_at"`
+	Comments      []CommentResponse  `json:"comments,omitempty"`
+	Reactions     []ReactionResponse `json:"reactions,omitempty"`
+	Path          string             `json:"path,omitempty"`
+	ThumbnailPath string             `json:"thumbnail_path,omitempty"`
 }
 
 type CategoryResponse struct {
@@ -58,12 +61,14 @@ func NewGuestHandler(
 	postRepo *repository.PostRepository,
 	commentRepo *repository.CommentRepository,
 	reactionRepo *repository.ReactionRepository,
+	imageRepo *repository.ImageRepository,
 ) *GuestHandler {
 	return &GuestHandler{
 		categoryRepo: categoryRepo,
 		postRepo:     postRepo,
 		commentRepo:  commentRepo,
 		reactionRepo: reactionRepo,
+		imageRepo:    imageRepo,
 	}
 }
 
@@ -130,17 +135,24 @@ func (h *GuestHandler) GetGuestData(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for _, post := range posts {
+			img, _ := h.imageRepo.GetByPostID(post.ID)
 			postResp := PostResponse{
-				ID:           post.ID,
-				UserID:       post.UserID,
-				Username:     post.Username,
-				CategoryID:   post.CategoryID,
-				CategoryName: cat.Name,   // ✅ inject category name
-				Title:        post.Title, // Optional title field
-				Content:      post.Content,
-				CreatedAt:    post.CreatedAt,
-				Comments:     []CommentResponse{},  // ✅ avoid null
-				Reactions:    []ReactionResponse{}, // ✅ avoid null
+				ID:            post.ID,
+				UserID:        post.UserID,
+				Username:      post.Username,
+				CategoryID:    post.CategoryID,
+				CategoryName:  cat.Name,   // ✅ inject category name
+				Title:         post.Title, // Optional title field
+				Content:       post.Content,
+				CreatedAt:     post.CreatedAt,
+				Comments:      []CommentResponse{},  // ✅ avoid null
+				Reactions:     []ReactionResponse{}, // ✅ avoid null
+				Path:          "",
+				ThumbnailPath: "",
+			}
+			if img != nil {
+				postResp.Path = img.Path
+				postResp.ThumbnailPath = img.ThumbnailPath
 			}
 
 			comments, err := h.commentRepo.GetCommentsByPostWithUser(post.ID)

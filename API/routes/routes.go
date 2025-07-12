@@ -19,17 +19,19 @@ func SetupRoutes(db *sql.DB) http.Handler {
 	postRepo := repository.NewPostRepository(db)
 	commentRepo := repository.NewCommentRepository(db)
 	reactionRepo := repository.NewReactionRepository(db)
+	imageRepo := repository.NewImageRepository(db)
 
 	// Create handlers
 	authHandler := handlers.NewAuthHandler(userRepo, sessionRepo)
 	oauthHandler := handlers.NewOAuthHandler(userRepo, sessionRepo, authHandler)
-	categoryHandler := handlers.NewCategoryHandler(categoryRepo, postRepo)
+	categoryHandler := handlers.NewCategoryHandler(categoryRepo, postRepo, imageRepo)
 	postHandler := handlers.NewPostHandler(postRepo)
+	imageHandler := handlers.NewImageHandler(imageRepo)
 	myPostsHandler := handlers.NewMyPostsHandler(postRepo, commentRepo, reactionRepo)
 	likedPostsHandler := handlers.NewLikedPostsHandler(postRepo, commentRepo, reactionRepo)
 	commentHandler := handlers.NewCommentHandler(commentRepo)
 	reactionHandler := handlers.NewReactionHandler(reactionRepo)
-	guestHandler := handlers.NewGuestHandler(categoryRepo, postRepo, commentRepo, reactionRepo)
+	guestHandler := handlers.NewGuestHandler(categoryRepo, postRepo, commentRepo, reactionRepo, imageRepo)
 
 	// Create middleware
 	registerLimiter := middleware.NewRateLimiter()
@@ -80,6 +82,7 @@ func SetupRoutes(db *sql.DB) http.Handler {
 	mux.Handle("/forum/api/user/liked", protected(http.HandlerFunc(likedPostsHandler.GetLikedPosts)))
 	mux.Handle("/forum/api/comments/create", protected(http.HandlerFunc(commentHandler.CreateComment)))
 	mux.Handle("/forum/api/react", protected(http.HandlerFunc(reactionHandler.CreateReact)))
+	mux.Handle("/forum/api/images/upload", protected(http.HandlerFunc(imageHandler.Upload)))
 
 	// Additional protected routes for user management
 	mux.Handle("/forum/api/user/profile", protected(http.HandlerFunc(authHandler.GetProfile)))

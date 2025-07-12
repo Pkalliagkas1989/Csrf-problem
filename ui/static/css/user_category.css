@@ -33,6 +33,13 @@ body, html {
   transition: box-shadow 0.2s, transform 0.2s;
 }
 
+.post-thumb {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  margin-bottom: 0.5em;
+}
+
 .post-title, .post-header {
   font-size: 1.3em;
   font-weight: bold;

@@ -14,7 +14,7 @@ import (
 
 // Database version constants
 const (
-	CURRENT_DB_VERSION = 3 // Updated to version 3 for OAuth state table
+	CURRENT_DB_VERSION = 4 // Updated for images table
 	INITIAL_VERSION    = 1
 )
 
@@ -42,14 +42,22 @@ func GetMigrations() []Migration {
 			Description: "Add OAuth state management",
 			SQL: []string{
 				`CREATE TABLE IF NOT EXISTS oauth_states (
-					state TEXT PRIMARY KEY,
-					provider TEXT NOT NULL,
-					ip_address TEXT,
-					created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					expires_at TIMESTAMP NOT NULL
-				)`,
+                                       state TEXT PRIMARY KEY,
+                                       provider TEXT NOT NULL,
+                                       ip_address TEXT,
+                                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                       expires_at TIMESTAMP NOT NULL
+                               )`,
 				`CREATE INDEX IF NOT EXISTS idx_oauth_states_expires ON oauth_states(expires_at)`,
 				`CREATE INDEX IF NOT EXISTS idx_oauth_states_provider ON oauth_states(provider)`,
+			},
+		},
+		{
+			Version:     4,
+			Description: "Add images table",
+			SQL: []string{
+				config.CreateImagesTable,
+				config.IdxImagesPostID,
 			},
 		},
 		// Add future migrations here
@@ -297,6 +305,7 @@ func createTables(db *sql.DB) error {
 		config.CreatePostsTable,
 		config.CreateCommentsTable,
 		config.CreateReactionsTable,
+		config.CreateImagesTable,
 		config.CreatePostCategoriesTable,
 		config.CreateOAuthTable,
 		// Add OAuth state table for new installations
@@ -334,6 +343,7 @@ func createIndexes(db *sql.DB) error {
 		config.IdxReactionsUserID,
 		config.IdxReactionsPostID,
 		config.IdxReactionsCommentID,
+		config.IdxImagesPostID,
 		// OAuth indexes
 		`CREATE INDEX IF NOT EXISTS idx_oauth_provider_user ON oauth_accounts(provider, provider_user_id)`,
 		`CREATE INDEX IF NOT EXISTS idx_oauth_user_id ON oauth_accounts(user_id)`,
@@ -388,16 +398,16 @@ func CleanupExpiredOAuthStates(db *sql.DB) error {
 	if err != nil {
 		return fmt.Errorf("failed to cleanup expired OAuth states: %v", err)
 	}
-	
+
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("failed to get rows affected: %v", err)
 	}
-	
+
 	if rowsAffected > 0 {
 		fmt.Printf("Cleaned up %d expired OAuth state(s)\n", rowsAffected)
 	}
-	
+
 	return nil
 }
 

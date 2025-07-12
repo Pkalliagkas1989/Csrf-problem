@@ -11,6 +11,9 @@ const contentInput = document.getElementById("post-body");
 const categoryCheckboxesContainer = document.getElementById("post-category");
 const titleCount = document.getElementById("post-title-count");
 const bodyCount = document.getElementById("post-body-count");
+const imageInput = document.getElementById("post-image");
+const addImageBtn = document.getElementById("add-image-btn");
+const imageError = document.getElementById("image-error");
 
 // Store CSRF token in-memory here (initially empty)
 let csrfTokenFromResponse = null;
@@ -62,6 +65,23 @@ function updateBodyCount() {
 
 titleInput.addEventListener("input", updateTitleCount);
 contentInput.addEventListener("input", updateBodyCount);
+
+addImageBtn.addEventListener("click", () => imageInput.click());
+
+imageInput.addEventListener("change", () => {
+    imageError.textContent = "";
+    const file = imageInput.files[0];
+    if (!file) return;
+    if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
+        imageError.textContent = "Unsupported image type";
+        imageInput.value = "";
+        return;
+    }
+    if (file.size > 20 * 1024 * 1024) {
+        imageError.textContent = "Image exceeds 20 MB limit";
+        imageInput.value = "";
+    }
+});
 
 // Open modal and load categories
 createBtn.addEventListener("click", async (e) => {
@@ -166,7 +186,6 @@ submitPostBtn.addEventListener("click", async () => {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
-                // Ensure the header name matches what your backend middleware expects
                 "X-CSRF-Token": csrfTokenFromResponse,
             },
             body: JSON.stringify({
@@ -178,16 +197,33 @@ submitPostBtn.addEventListener("click", async () => {
 
         if (!resp.ok) {
             const errData = await resp.json().catch(() => ({}));
-            // Provide more specific error messages for debugging
             console.error("Backend error response:", errData);
             alert("Error creating post: " + (errData.message || `Status: ${resp.status} - ${resp.statusText}`));
             return;
         }
 
-        // alert("Post created!");
+        const created = await resp.json();
+
+        const imageFile = imageInput.files[0];
+        if (imageFile) {
+            const fd = new FormData();
+            fd.append("post_id", created.id || created.ID);
+            fd.append("image", imageFile);
+            const imgResp = await fetch("http://localhost:8080/forum/api/images/upload", {
+                method: "POST",
+                credentials: "include",
+                headers: { "X-CSRF-Token": csrfTokenFromResponse },
+                body: fd
+            });
+            if (!imgResp.ok) {
+                const d = await imgResp.json().catch(() => ({}));
+                alert("Image upload failed: " + (d.message || imgResp.statusText));
+            }
+        }
+
         modal.classList.add("hidden");
         clearModalInputs();
-        location.reload(); // Or update your DOM dynamically if you prefer
+        location.reload();
     } catch (err) {
         console.error("Post creation failed:", err);
         alert("Failed to create post. Try again later.");

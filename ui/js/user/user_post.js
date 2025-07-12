@@ -71,6 +71,13 @@ function renderSinglePost(post) {
   content.className = 'post-content';
   content.textContent = post.content || '';
 
+  if (post.path) {
+    const img = document.createElement('img');
+    img.src = post.path;
+    img.style.maxWidth = '100%';
+    postContainer.appendChild(img);
+  }
+
   // Wrap post content in a card
   const postContentCard = document.createElement('div');
   postContentCard.className = 'post-content-card';

@@ -46,6 +46,14 @@ function renderFeed(categories) {
     postNode.querySelector(".post-header").textContent =
       post.username || post.user_id || "Unknown user";
 
+    // Thumbnail if present
+    if (post.thumbnail_path) {
+      const imgEl = postNode.querySelector(".post-thumb");
+      imgEl.src = post.thumbnail_path;
+    } else {
+      postNode.querySelector(".post-thumb").style.display = "none";
+    }
+
     // Title & content
     postNode.querySelector(".post-title").textContent = post.title || "";
     postNode.querySelector(".post-content").textContent = post.content || "";

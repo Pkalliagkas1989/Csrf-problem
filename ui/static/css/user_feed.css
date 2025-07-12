@@ -32,6 +32,13 @@ body, html {
   transition: box-shadow 0.2s, transform 0.2s;
 }
 
+.post-thumb {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  margin-bottom: 0.5em;
+}
+
 .post.clickable-post:hover {
   box-shadow: 0 12px 40px rgba(139, 92, 246, 0.22);
   transform: translateY(-2px) scale(1.01);
